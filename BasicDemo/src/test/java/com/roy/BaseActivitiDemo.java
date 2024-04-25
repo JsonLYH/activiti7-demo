@@ -96,7 +96,7 @@ public class BaseActivitiDemo {
     @Test
     public void testFindPersonalTaskList() {
 //        任务负责人
-        String assignee = "financer";
+        String assignee = "worker";
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 //        创建TaskService
         TaskService taskService = processEngine.getTaskService();
@@ -126,8 +126,9 @@ public class BaseActivitiDemo {
 //        返回一个任务对象
         //使用singleResult要确保只有一个任务，否则会报错
         Task task = taskService.createTaskQuery()
-                .processDefinitionKey("new-Leave") //流程Key
-                .taskAssignee("financer")  //要查询的负责人
+//                .processDefinitionKey("new-Leave") //流程Key
+                .processInstanceId("15001")
+                .taskAssignee("manger")  //要查询的负责人
                 .singleResult();
 
 //        完成任务,参数：任务id
@@ -166,7 +167,7 @@ public class BaseActivitiDemo {
     }
 
     /**
-     * 查询流程实例,流程已经走完的就查不到了
+     * 查询当前没有走完的流程实例,流程已经走完的就查不到了
      */
     @Test
     public void queryProcessInstance() {
@@ -252,7 +253,7 @@ public class BaseActivitiDemo {
 //        获取 actinst表的查询对象
         HistoricActivityInstanceQuery instanceQuery = historyService.createHistoricActivityInstanceQuery();
 //        查询 actinst表，条件：根据 InstanceId 查询，查询一个流程的所有历史信息
-//        instanceQuery.processInstanceId("2501");
+        instanceQuery.processInstanceId("15001");
 //        查询 actinst表，条件：根据 DefinitionId 查询，查询一种流程的所有历史信息
 //        instanceQuery.processDefinitionId("myLeave:1:22504");
 //        增加排序操作,orderByHistoricActivityInstanceStartTime 根据开始时间排序 asc 升序
@@ -261,11 +262,22 @@ public class BaseActivitiDemo {
         List<HistoricActivityInstance> activityInstanceList = instanceQuery.list();
 //        输出
         for (HistoricActivityInstance hi : activityInstanceList) {
-            System.out.println(hi.getActivityId());
-            System.out.println(hi.getActivityName());
-            System.out.println(hi.getProcessDefinitionId());
-            System.out.println(hi.getProcessInstanceId());
-            System.out.println("<==========================>");
+
+            if(hi.getStartTime()!=null && hi.getEndTime()==null){
+                System.out.println("<============当前流程实例等待以下负责人审批=============>");
+                System.out.println(hi.getAssignee());
+                System.out.println(hi.getActivityId());
+                System.out.println(hi.getActivityName());
+                System.out.println(hi.getProcessDefinitionId());
+                System.out.println(hi.getProcessInstanceId());
+            }else{
+                System.out.println("<============以下是已审批历史记录=============>");
+                System.out.println(hi.getAssignee());
+                System.out.println(hi.getActivityId());
+                System.out.println(hi.getActivityName());
+                System.out.println(hi.getProcessDefinitionId());
+                System.out.println(hi.getProcessInstanceId());
+            }
         }
     }
 
