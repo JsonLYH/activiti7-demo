@@ -8,7 +8,7 @@
 3.ActivitiGatewayInclusive--包含网关的案例<br>
 ![img_4.png](img_4.png)
 4.ActivitiGatewayParallel--并行网关的案例<br>
-条件在并行网关会被忽略
+条件在并行网关会被忽略<br>
 ![img_2.png](img_2.png)
 5.BaseActivitiDemo--基础的案例<br>
 ![img.png](img.png)
