@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="new-Leave" name="请假审批流程" isExecutable="true">
+    <startEvent id="sid-6eeaa965-7e30-4413-a886-f8d645069dd9"/>
+    <userTask id="sid-a40459d2-9fbb-4771-ae52-e52ecc28eeec" name="提交请假申请" activiti:assignee="worker"/>
+    <sequenceFlow id="sid-980c3a48-94fe-4442-b91c-21a971b1c370" sourceRef="sid-6eeaa965-7e30-4413-a886-f8d645069dd9" targetRef="sid-a40459d2-9fbb-4771-ae52-e52ecc28eeec"/>
+    <userTask id="sid-c24f23e8-9774-49bb-9be7-61426f8b5a27" name="部门经理审批" activiti:assignee="manger"/>
+    <sequenceFlow id="sid-155b2dd8-3067-42c4-afc8-c39646ce1ed7" sourceRef="sid-a40459d2-9fbb-4771-ae52-e52ecc28eeec" targetRef="sid-c24f23e8-9774-49bb-9be7-61426f8b5a27"/>
+    <userTask id="sid-cf894e31-7448-429c-b54c-90edb495f2e9" name="财务审批" activiti:assignee="financer"/>
+    <sequenceFlow id="sid-b3d0fb18-9355-4dd9-a638-e3665a09ec31" sourceRef="sid-c24f23e8-9774-49bb-9be7-61426f8b5a27" targetRef="sid-cf894e31-7448-429c-b54c-90edb495f2e9"/>
+    <endEvent id="sid-a8b087fa-42c4-4da5-bce8-3da6ebc84470"/>
+    <sequenceFlow id="sid-9bc560bc-d9d4-485b-9dcf-1cdc91faa291" sourceRef="sid-cf894e31-7448-429c-b54c-90edb495f2e9" targetRef="sid-a8b087fa-42c4-4da5-bce8-3da6ebc84470"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_new-Leave">
+    <bpmndi:BPMNPlane bpmnElement="new-Leave" id="BPMNPlane_new-Leave">
+      <bpmndi:BPMNShape id="shape-2d9d7a20-93e3-47db-9066-a331c69ed47c" bpmnElement="sid-6eeaa965-7e30-4413-a886-f8d645069dd9">
+        <omgdc:Bounds x="-3.5" y="-109.75" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-92e21818-30f1-46aa-91dc-270587e46375" bpmnElement="sid-a40459d2-9fbb-4771-ae52-e52ecc28eeec">
+        <omgdc:Bounds x="-19.75" y="-51.25" width="62.5" height="40.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-78c759b8-88d0-4762-b13d-a5951f1a07b2" bpmnElement="sid-980c3a48-94fe-4442-b91c-21a971b1c370">
+        <omgdi:waypoint x="11.5" y="-79.75"/>
+        <omgdi:waypoint x="11.5" y="-51.25"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="sid-a62ba736-d79f-4cb4-b438-70f764cfc687" bpmnElement="sid-c24f23e8-9774-49bb-9be7-61426f8b5a27">
+        <omgdc:Bounds x="-19.75" y="19.25" width="62.5" height="40.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-8cca6391-1f2e-4610-868d-d777dc8095ef" bpmnElement="sid-155b2dd8-3067-42c4-afc8-c39646ce1ed7">
+        <omgdi:waypoint x="11.5" y="-11.25"/>
+        <omgdi:waypoint x="11.5" y="19.25"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="sid-441a7492-6093-4c2b-90f9-4884e5a86d3b" bpmnElement="sid-cf894e31-7448-429c-b54c-90edb495f2e9">
+        <omgdc:Bounds x="-19.75" y="94.25" width="62.5" height="40.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-57e7b468-be52-4feb-bf4b-aa898e2446c8" bpmnElement="sid-b3d0fb18-9355-4dd9-a638-e3665a09ec31">
+        <omgdi:waypoint x="11.5" y="59.25"/>
+        <omgdi:waypoint x="11.5" y="94.25"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="shape-17440400-ee80-4839-bccc-7b72cbee0dac" bpmnElement="sid-a8b087fa-42c4-4da5-bce8-3da6ebc84470">
+        <omgdc:Bounds x="-3.5" y="173.25" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-25259095-f4e2-41d2-8082-d50f360e029c" bpmnElement="sid-9bc560bc-d9d4-485b-9dcf-1cdc91faa291">
+        <omgdi:waypoint x="11.5" y="134.25"/>
+        <omgdi:waypoint x="11.5" y="173.25"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
