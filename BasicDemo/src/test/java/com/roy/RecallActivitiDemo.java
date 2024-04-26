@@ -1,6 +1,5 @@
 package com.roy;
 
-import com.roy.demo.Command.DeleteTaskCommand;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricActivityInstanceQuery;
@@ -8,24 +7,24 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
-import org.junit.Test;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /**
- * @author ：楼兰
- * @date ：Created in 2021/4/7
- * @description:
- **/
-
-public class BaseActivitiDemo {
+ * 流程撤回测试
+ */
+public class RecallActivitiDemo {
 
     /**
      * 部署流程定义  文件上传方式，一次只能部署一个工作流
@@ -38,10 +37,10 @@ public class BaseActivitiDemo {
         RepositoryService repositoryService = processEngine.getRepositoryService();
 //        3、使用RepositoryService进行部署
         Deployment deployment = repositoryService.createDeployment()
-                .addClasspathResource("bpmn/new-Leave.bpmn20.xml") // 添加bpmn资源
+                .addClasspathResource("bpmn/withdraw.bpmn20.xml") // 添加bpmn资源
                 //png资源命名是有规范的。Leave.myLeave.png|jpg|gif|svg  或者Leave.png|jpg|gif|svg
                 .addClasspathResource("bpmn/diagram.png")  // 添加png资源
-                .name("请假申请流程")
+                .name("流程撤回测试")
                 .deploy();
 //        4、输出部署信息
         System.out.println("流程部署id：" + deployment.getId());
@@ -83,7 +82,7 @@ public class BaseActivitiDemo {
         RuntimeService runtimeService = processEngine.getRuntimeService();
 //        3、根据流程定义Id启动流程
         ProcessInstance processInstance = runtimeService
-                .startProcessInstanceByKey("new-Leave");
+                .startProcessInstanceByKey("withdraw");
 //        输出内容
         System.out.println("流程定义id：" + processInstance.getProcessDefinitionId());
         System.out.println("流程实例id：" + processInstance.getId());
@@ -103,7 +102,7 @@ public class BaseActivitiDemo {
         TaskService taskService = processEngine.getTaskService();
 //        根据流程key 和 任务负责人 查询任务
         List<Task> list = taskService.createTaskQuery()
-                .processDefinitionKey("new-Leave") //流程Key
+                .processDefinitionKey("withdraw") //流程Key
                 .taskAssignee(assignee)//只查询该任务负责人的任务
                 .list();
         for (Task task : list) {
@@ -138,13 +137,18 @@ public class BaseActivitiDemo {
         //使用singleResult要确保只有一个任务，否则会报错
         Task task = taskService.createTaskQuery()
 //                .processDefinitionKey("new-Leave") //流程Key
-                .processInstanceId("45001")
-                .taskAssignee("financer")  //要查询的负责人
+                .processInstanceId("60001")
+                .taskAssignee("manger")  //要查询的负责人
                 .singleResult();
         //只是单纯的添加任务审批意见，并不算审批
-        taskService.addComment(task.getId(),"45001","同意");
+        taskService.addComment(task.getId(),"60001","同意");
 //        完成任务,参数：任务id
-        taskService.complete(task.getId());
+        Map<String,Object> variables = new HashMap<>();
+        //审批通过
+        //variables.put("result",1);
+        //审批驳回
+        variables.put("result",0);
+        taskService.complete(task.getId(),variables);
     }
 
     /**
@@ -184,7 +188,7 @@ public class BaseActivitiDemo {
     @Test
     public void queryProcessInstance() {
         // 流程定义key
-        String processDefinitionKey = "new-Leave";
+        String processDefinitionKey = "withdraw";
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         // 获取RunTimeService
         RuntimeService runtimeService = processEngine.getRuntimeService();
@@ -209,7 +213,7 @@ public class BaseActivitiDemo {
     @Test
     public void deleteDeployment() {
         // 流程部署id
-        String deploymentId = "1";
+        String deploymentId = "55001";
 
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         // 通过流程引擎获取repositoryService
@@ -278,7 +282,7 @@ public class BaseActivitiDemo {
 //        获取 actinst表的查询对象
         HistoricActivityInstanceQuery instanceQuery = historyService.createHistoricActivityInstanceQuery();
 //        查询 actinst表，条件：根据 InstanceId 查询，查询一个流程的所有历史信息
-        instanceQuery.processInstanceId("45001");
+        instanceQuery.processInstanceId("60001");
 //        查询 actinst表，条件：根据 DefinitionId 查询，查询一种流程的所有历史信息
 //        instanceQuery.processDefinitionId("myLeave:1:22504");
 //        增加排序操作,orderByHistoricActivityInstanceStartTime 根据开始时间排序 asc 升序
@@ -307,6 +311,11 @@ public class BaseActivitiDemo {
                 System.out.println(hi.getProcessDefinitionId());
                 System.out.println(hi.getProcessInstanceId());
                 System.out.println("删除原因:"+hi.getDeleteReason());
+                System.out.println("============当前任务审批意见===============");
+                List<Comment> taskComment=processEngine.getTaskService().getTaskComments(hi.getTaskId());
+                for (Comment comment : taskComment){
+                    System.out.println("审批意见:"+comment.getFullMessage());
+                }
             }
         }
     }
